@@ -1,4 +1,4 @@
 Kyuubi
 ======
 
-An application about queues
+An application about queues, with NodeJS

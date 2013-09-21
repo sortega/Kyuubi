@@ -1,3 +1,4 @@
+;// Copyright Bitwise Labs. All rights reserved.
 "use strict";
 var app = require("../../app.js").app,
     expect = require("expect.js"),

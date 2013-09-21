@@ -7,10 +7,18 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
+var login = require('./routes/login');
 var http = require('http');
 var path = require('path');
 
 var app = express();
+
+var unsupportedVerb = function(req, res) {
+	res.json(405, {
+		"errorCode": "GEN-03",
+		"errorDescription": "The HTTP verb is not supported in the REST resource."
+	});
+};
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -20,8 +28,8 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
-app.use(express.session());
+app.use(express.cookieParser('.q(%X0l(KD"})]6r'));
+app.use(express.cookieSession({ secret: 'g12**"3f"<Xq52k' }));
 app.use(app.router);
 app.use(require('less-middleware')({ src: __dirname + '/public' }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -33,6 +41,10 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/users', user.list);
+
+var loginPath = '/login';
+app.post(loginPath, login.authorize);
+app.all(loginPath, unsupportedVerb);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

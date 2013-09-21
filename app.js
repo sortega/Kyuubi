@@ -6,7 +6,6 @@
 
 var express = require('express');
 var routes = require('./routes');
-var user = require('./routes/user');
 var login = require('./routes/login');
 var http = require('http');
 var path = require('path');
@@ -14,10 +13,10 @@ var path = require('path');
 var app = express();
 
 var unsupportedVerb = function(req, res) {
-	res.json(405, {
-		"errorCode": "GEN-03",
-		"errorDescription": "The HTTP verb is not supported in the REST resource."
-	});
+    res.json(405, {
+        errorCode: "GEN-03",
+        errorDescription: "The HTTP verb is not supported in the REST resource."
+    });
 };
 
 // all environments
@@ -36,18 +35,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
 
 app.get('/', routes.index);
-app.get('/users', user.list);
 
-var loginPath = '/login';
+var loginPath = '/api/login';
 app.post(loginPath, login.authorize);
 app.all(loginPath, unsupportedVerb);
 
+app.all('/api/*', function(req, res) {
+    res.json(404, {
+        errorCode: "GEN-04",
+        errorDescription: "The REST resource was not found."
+    });
+});
+
 http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+    console.log('Express server listening on port ' + app.get('port'));
 });
 
 exports.app = app;

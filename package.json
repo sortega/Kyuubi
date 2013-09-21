@@ -1,0 +1,26 @@
+{
+  "name": "kyuubi",
+  "version": "0.0.1",
+  "author": "Bitwise Labs",
+  "description": "TODO",
+  "scripts": {
+    "start": "node ./bin/http-server",
+    "test": "vows --spec --isolate",
+    "predeploy": "echo This will be run before deploying the app",
+    "postdeploy": "echo This will be run after deploying the app"
+  },
+  "main": "./lib/http-server",
+  "dependencies" : {
+    "express"  :  "3.4.0",
+    "jade"     :  "0.35.0",
+    "requirejs":  "2.1.8"
+  },
+  "devDependencies": {
+    "vows"    :  "0.7.0",
+    "request" :  "2.27.0"
+  },
+  "engines": {
+    "node": "0.10.18"
+  }
+}
+

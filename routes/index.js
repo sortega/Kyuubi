@@ -1,3 +1,4 @@
+;// Copyright Bitwise Labs. All rights reserved.
 
 /*
  * GET home page.

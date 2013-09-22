@@ -38,21 +38,41 @@ function Queue(redisQueue, smsService) {
 
     var actions = {
         push: {
-            getRecepients: function() { },
+            getRecepients: q,
             queueAction: function(req, res, queue) {
-                return queue.insert(JSON.stringify(req.body.member));
+                if (req.body.member) {
+                    return queue.insert(JSON.stringify(req.body.member));
+                } else {
+                    return q.reject({
+                        errorCode: "QUE-01",
+                        errorMessage: "Las operaciones de insercción deben tener un número de teléfono"
+                    });
+                }
             },
             sendSms: function() { }
         },
         pop: {
-            getRecepients: function(req, res, queue) {
-                return queue.peek();
+            getRecepients: function(queue) {
+                return q([queue.peek(), queue.get(3)]);
             },
-            queueAction: function(req, res, queue) { return queue.pop(); },
-            sendSms: sendNotificationSms
+            queueAction: function(req, res, queue) {
+                return queue.pop().then(function(elem) {
+                    if (elem === null) {
+                        throw {
+                            errorCode: "QUE-02",
+                            errorMessage: "La cola está vacía."
+                        };
+                    }
+                    return JSON.parse(elem);
+                });
+            },
+            sendSms: function(recipients, req) {
+                sendNotificationSms(recipients[0], req);
+                sendSms(recipients[1], "Su turno llegará en breve. Por favor, acérquese al local.");
+            }
         },
         clear: {
-            getRecepients: function(req, res, queue) {
+            getRecepients: function(queue) {
                 return queue.list(0, 0);
             },
             queueAction: function(req, res, queue) { return queue.clear(); },
@@ -71,15 +91,15 @@ function Queue(redisQueue, smsService) {
             var queue = redisQueue.getQueue(id);
             action.getRecepients(queue)
                 .then(function(recipients) {
+                    action.queueAction(req, res, redisQueue.getQueue(id))
+                        .then(function() {
+                            returnQueue(id, res);
+                            action.sendSms(recipients, req);
+                        },
+                        function(err) {
 
-                });
-            action.queueAction(req, res, redisQueue.getQueue(id))
-                .then(function() {
-                    returnQueue(id, res);
-                    action.sendSms(recipients, req);
-                },
-                function() {
-                    // TODO: Error case something failed
+                            // TODO: Error case something failed
+                        });
                 });
         } else {
             // TODO send error unsupported action;

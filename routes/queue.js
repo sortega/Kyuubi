@@ -19,7 +19,7 @@ function Queue(redisQueue, smsService) {
             });
     };
 
-    var sendSms = function(receipients, body) {
+    var sendSms = function(recipients, body) {
         if (body) {
             recipients = recipients || [];
             if (!(recipients instanceof Array)) {
@@ -36,11 +36,14 @@ function Queue(redisQueue, smsService) {
         return sendSms(recipients, req.body.notification);
     };
 
+    var id = 1;
     var actions = {
         push: {
             getRecepients: q,
             queueAction: function(req, res, queue) {
                 if (req.body.member) {
+                    var member = req.body.member;
+                    member.id = id++;
                     return queue.insert(JSON.stringify(req.body.member));
                 } else {
                     return q.reject({
@@ -53,7 +56,7 @@ function Queue(redisQueue, smsService) {
         },
         pop: {
             getRecepients: function(queue) {
-                return q([queue.peek(), queue.get(3)]);
+                return q.all([queue.peek(), queue.get(3)]);
             },
             queueAction: function(req, res, queue) {
                 return queue.pop().then(function(elem) {

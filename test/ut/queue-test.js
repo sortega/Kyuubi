@@ -30,7 +30,8 @@ describe("Queue resource", function() {
                     "id": "bar",
                     "name": "La cola de bar",
                     "members": [
-                        {"phoneNumber": "string"}
+                        {"phoneNumber": "string",
+                         "id": 1}
                     ]
                 })
                 .end(done)})
@@ -59,8 +60,8 @@ describe("Queue resource", function() {
                         "id": "foo",
                         "name": "La cola de foo",
                         "members": [
-                            {"phoneNumber": "string"},
-                            {"phoneNumber": "another"}
+                            {"id": 2, "phoneNumber": "string"},
+                            {"id": 3, "phoneNumber": "another"}
                         ]
                     })
                     .end(done)
@@ -111,8 +112,8 @@ describe("Queue resource", function() {
                         "id": "grr",
                         "name": "La cola de grr",
                         "members": [
-                            {"phoneNumber": "string"},
-                            {"phoneNumber": "another"}
+                            {"id": 4, "phoneNumber": "string"},
+                            {"id": 5, "phoneNumber": "another"}
                         ]
                     })
                     .end(done)
@@ -151,7 +152,7 @@ describe("Queue resource", function() {
                         "id": "gro",
                         "name": "La cola de gro",
                         "members": [
-                            {"phoneNumber": "second"}
+                            {"id": 7, "phoneNumber": "second"}
                         ]
                     })
                     .end(done)

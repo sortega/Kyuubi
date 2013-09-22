@@ -87,17 +87,19 @@ require(['jquery', 'jquery_pjax', 'jquery_cookie'], function($) {
             setMessage(newMember.phoneNumber + ' añadido con número ' + newMember.id);
             $('#enqueue form')[0].reset();
             validateEnqueueForm();
+            updateQueue(queue);
         };
 
         $('#enqueue form').submit(function(e) {
             e.preventDefault();
             var phoneNumber = toPhoneNumber($('#phoneNumber').val());
-            $.post(queueResource, { 
+            var request = { 
                 action: "push",
                 member: {
                     phoneNumber: phoneNumber
                 }
-            }).then(queueNewMember, function() {
+            };
+            $.post(queueResource, request, null, "json").then(queueNewMember, function() {
                 alert("No se pudo añadir a la cola");
             });
         });

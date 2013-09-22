@@ -119,17 +119,6 @@ describe("Queue resource", function() {
             };
         })
 
-    it("must not allow for multiple pushes in one request",
-        function(done) {
-            agent.post("/api/queue/brr")
-                .send({
-                    "action": "push",
-                    "member": {"phoneNumber": "string"},
-                    "member": {"phoneNumber": "strong"}})
-                .expect(400)
-                .end(done)
-        })
-
     it("must allow to pop the first added member",
         function(done) {
             agent.post("/api/queue/gro")

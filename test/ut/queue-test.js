@@ -158,4 +158,41 @@ describe("Queue resource", function() {
                     .end(done)
             }
         })
+
+    it("must accept a notification when popping from a queue",
+        function(done) {
+            agent.post("/api/queue/gro")
+                .send({
+                    "action" : "push",
+                    "member" : {
+                        "phoneNumber" : "first"
+                    }
+                })
+                .expect(200)
+                .end(popWithNotification)
+            function popWithNotification(err, req) {
+                agent.post("/api/queue/gro")
+                    .send({
+                        "action": "pop",
+                        "notification": "Composed by the client code"
+                    })
+                    .expect(200)
+                    .expect({"id": "foo", "name": "La cola de foo", "members": []})
+                    .end(done)
+            };
+        })
+
+    it("must return error if popping from empty list",
+        function(done) {
+            agent.post("/api/queue/grb")
+                .send({
+                    "action": "pop"
+                })
+                .expect(400)
+                .expect({
+                  "errorCode" : "QUE-02",
+                  "errorMessage" : "La cola está vacía."
+                })
+                .end(done)
+        })
 });

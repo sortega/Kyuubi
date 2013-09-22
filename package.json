@@ -4,7 +4,6 @@
   "author": "Bitwise Labs",
   "private": true,
   "scripts": {
-    "start": "node app.js",
     "test": "mocha --recursive -R list"
   },
   "dependencies": {

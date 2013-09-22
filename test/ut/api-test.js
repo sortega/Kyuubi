@@ -2,7 +2,7 @@
 
 "use strict";
 
-var app = require("../../app").app,
+var app = require("../utils/app-mock").app,
     request = require("supertest");
 
 describe("The api", function() {

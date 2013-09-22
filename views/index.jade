@@ -2,13 +2,14 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Siente la ira de #{title}
 
   form(id="login")
+    div(id="error")
     p
-        | Username: 
+        | Nombre de usuario: 
         input(type="text", id="username")
     p
-        | Password: 
+        | Contraseña: 
         input(type="text", id="password")
-    input(type="submit")
+    input(type="submit", value="Enviar")

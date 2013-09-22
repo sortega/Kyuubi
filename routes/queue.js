@@ -39,7 +39,12 @@ function Queue(redisQueue, smsService) {
     var id = 1;
     var actions = {
         push: {
-            getRecepients: q,
+            getRecepients: function(queue, req) {
+                if (req.body.member && req.body.member.phoneNumber) {
+                    return q(req.body.member.phoneNumber);
+                }
+                return q();
+            },
             queueAction: function(req, res, queue) {
                 if (req.body.member) {
                     var member = req.body.member;
@@ -52,7 +57,9 @@ function Queue(redisQueue, smsService) {
                     });
                 }
             },
-            sendSms: q
+            sendSms: function(recipients, req) {
+                return sendSms(recipients, "Tu número es el " + req.body.member.id);
+            }
         },
         pop: {
             getRecepients: function(queue) {
@@ -95,7 +102,7 @@ function Queue(redisQueue, smsService) {
             var action = actions[req.body.action];
             var id = req.params.id;
             var queue = redisQueue.getQueue(id);
-            action.getRecepients(queue)
+            action.getRecepients(queue, req)
                 .then(function(recipients) {
                     return action.queueAction(req, res, redisQueue.getQueue(id))
                         .then(function() {
@@ -107,6 +114,8 @@ function Queue(redisQueue, smsService) {
                             res.json(200, queue);
                         },
                         function(err) {
+                            console.log("Error when processing REST queue request:");
+                            console.log(err);
                             res.json(400, err);
                         });
                 }).done();

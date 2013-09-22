@@ -16,9 +16,9 @@ describe("Queue resource", function() {
                 .end(done);
         });
 
-    it("must allow to push users to the created queue",
+    it("must allow to push users to a queue",
         function(done) {
-            agent.post("/api/queue/foo")
+            agent.post("/api/queue/bar")
                 .send({
                     "action" : "push",
                     "member" : {
@@ -27,8 +27,8 @@ describe("Queue resource", function() {
                 })
                 .expect(200)
                 .expect({
-                    "id": "foo",
-                    "name": "La cola de foo",
+                    "id": "bar",
+                    "name": "La cola de bar",
                     "members": [
                         {"phoneNumber": "string"}
                     ]
@@ -41,20 +41,29 @@ describe("Queue resource", function() {
                 .send({
                     "action" : "push",
                     "member" : {
-                        "phoneNumber" : "another"
+                        "phoneNumber" : "string"
                     }
                 })
                 .expect(200)
-                .expect({
-                    "id": "foo",
-                    "name": "La cola de 1",
-                    "members": [
-                        {
-                            "phoneNumber": "string"
-                        },
-                        {
-                            "phoneNumber": "another"
+                .end(postAgain)
+            function postAgain(err, req) {
+                agent.post("/api/queue/foo")
+                    .send({
+                        "action" : "push",
+                        "member" : {
+                            "phoneNumber" : "another"
                         }
-                 ]})
-                .end(done)})
+                    })
+                    .expect(200)
+                    .expect({
+                        "id": "foo",
+                        "name": "La cola de foo",
+                        "members": [
+                            {"phoneNumber": "string"},
+                            {"phoneNumber": "another"}
+                        ]
+                    })
+                    .end(done)
+            };
+        })
 });

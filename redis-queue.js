@@ -28,5 +28,8 @@ function QueueSystem(redis) {
 };
 
 module.exports = function(redis) {
+    if (!redis) {
+        redis = require('redis');
+    }
     return new QueueSystem(redis);
 };

@@ -45,6 +45,12 @@ exports.create = function(port, redisQueue) {
     app.post(loginPath, login.authorize);
     app.all(loginPath, unsupportedVerb);
 
+    var queuePath = '/api/queue/:id';
+    app.get(queuePath, queue.get);
+    app.post(queuePath, queue.dispatchAction);
+    
+    app.all(queuePath, unsupportedVerb);
+
     app.all('/api/*', function(req, res) {
         res.json(404, {
             errorCode: "GEN-04",

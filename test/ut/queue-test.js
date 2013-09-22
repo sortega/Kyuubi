@@ -22,7 +22,7 @@ describe("Queue resource", function() {
                 .send({
                     "action" : "push",
                     "member" : {
-                        "phoneNumber" : "string"
+                        "phoneNumber" : "34666111333"
                     }
                 })
                 .expect(200)
@@ -30,7 +30,7 @@ describe("Queue resource", function() {
                     "id": "bar",
                     "name": "La cola de bar",
                     "members": [
-                        {"phoneNumber": "string",
+                        {"phoneNumber": "34666111333",
                          "id": 1}
                     ]
                 })
@@ -42,7 +42,7 @@ describe("Queue resource", function() {
                 .send({
                     "action" : "push",
                     "member" : {
-                        "phoneNumber" : "string"
+                        "phoneNumber" : "34666111333"
                     }
                 })
                 .expect(200)
@@ -52,7 +52,7 @@ describe("Queue resource", function() {
                     .send({
                         "action" : "push",
                         "member" : {
-                            "phoneNumber" : "another"
+                            "phoneNumber" : "34666111222"
                         }
                     })
                     .expect(200)
@@ -60,8 +60,8 @@ describe("Queue resource", function() {
                         "id": "foo",
                         "name": "La cola de foo",
                         "members": [
-                            {"id": 2, "phoneNumber": "string"},
-                            {"id": 3, "phoneNumber": "another"}
+                            {"id": 2, "phoneNumber": "34666111333"},
+                            {"id": 3, "phoneNumber": "34666111222"}
                         ]
                     })
                     .end(done)
@@ -89,7 +89,7 @@ describe("Queue resource", function() {
                 .send({
                     "action" : "push",
                     "member" : {
-                        "phoneNumber" : "string"
+                        "phoneNumber" : "34666111333"
                     }
                 })
                 .expect(200)
@@ -99,7 +99,7 @@ describe("Queue resource", function() {
                     .send({
                         "action" : "push",
                         "member" : {
-                            "phoneNumber" : "another"
+                            "phoneNumber" : "34666111222"
                         }
                     })
                     .expect(200)
@@ -112,8 +112,8 @@ describe("Queue resource", function() {
                         "id": "grr",
                         "name": "La cola de grr",
                         "members": [
-                            {"id": 4, "phoneNumber": "string"},
-                            {"id": 5, "phoneNumber": "another"}
+                            {"id": 4, "phoneNumber": "34666111333"},
+                            {"id": 5, "phoneNumber": "34666111222"}
                         ]
                     })
                     .end(done)
@@ -126,7 +126,7 @@ describe("Queue resource", function() {
                 .send({
                     "action" : "push",
                     "member" : {
-                        "phoneNumber" : "first"
+                        "phoneNumber" : "34666111333"
                     }
                 })
                 .expect(200)
@@ -136,7 +136,7 @@ describe("Queue resource", function() {
                     .send({
                         "action" : "push",
                         "member" : {
-                            "phoneNumber" : "second"
+                            "phoneNumber" : "34666111222"
                         }
                     })
                     .expect(200)
@@ -152,7 +152,7 @@ describe("Queue resource", function() {
                         "id": "gro",
                         "name": "La cola de gro",
                         "members": [
-                            {"id": 7, "phoneNumber": "second"}
+                            {"id": 7, "phoneNumber": "34666111222"}
                         ]
                     })
                     .end(done)
@@ -165,7 +165,7 @@ describe("Queue resource", function() {
                 .send({
                     "action" : "push",
                     "member" : {
-                        "phoneNumber" : "first"
+                        "phoneNumber" : "34666111333"
                     }
                 })
                 .expect(200)

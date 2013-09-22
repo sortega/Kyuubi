@@ -3,5 +3,18 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    script(type='text/javascript', src='/javascripts/require.js')
+    script.
+        requirejs.config({
+            baseUrl: 'javascripts',
+            paths: {
+                jquery: '//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min'
+            },
+            shim: {
+                'jquery_pjax': ['jquery'],
+                'jquery_cookie': ['jquery']
+            }
+        });
+        requirejs(["main"]);
   body
     block content

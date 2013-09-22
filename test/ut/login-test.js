@@ -51,18 +51,12 @@ describe("Login resource", function() {
             .end(done);
     });
 
-    it("must return 200 and a logged in cookie if correct credentials or valid cookie is provided",
+    it("must return 200 and a logged in cookie if correct credentials is provided",
         function(done) {
-            var requestAgain = function(err, result) {
-                agent.post("/api/login")
-                    .set('Cookie', result.res.headers["set-cookie"])
-                    .expect(200)
-                    .end(done);
-            }
             agent.post("/api/login")
                 .send({ username: "admin", password: "admin!"})
                 .expect(200)
                 .expect('Set-Cookie', /.*loggedIn%22%3Atrue.*/)
-                .end(requestAgain);
+                .end(done);
         });
 });

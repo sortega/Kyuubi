@@ -2,21 +2,21 @@
 
 "use strict";
 
-var altiria = require("../utils/altiria-mock")(),
+var sms = require("../utils/sms-mock")(),
     expect = require("expect.js"),
     q = require("q"),
     _ = require("underscore");
 
-describe("Mocked Altiria SMS service", function() {
+describe("Mocked SMS service", function() {
 
     function expectSendError(dest, msg, done) {
-        altiria.send(dest, msg)
+        sms.send(dest, msg)
             .catch(function (error) { expect(error).to.be.a(Error); })
             .done(done);
     }
 
     it("must allow message sending", function(done) {
-        altiria.send("34639747229", "Welcome to Kyuubi!")
+        sms.send("34639747229", "Welcome to Kyuubi!")
             .then(function (result) { expect(result).to.be(true); })
             .done(done);
     });

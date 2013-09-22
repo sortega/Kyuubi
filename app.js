@@ -7,6 +7,7 @@
 var express = require('express');
 var routes = require('./routes');
 var login = require('./routes/login');
+var queues = require('./routes/queues');
 var path = require('path');
 
 exports.create = function(port, redisQueue) {
@@ -40,6 +41,7 @@ exports.create = function(port, redisQueue) {
     }
 
     app.get('/', routes.index);
+    app.get('/queue', queues.showDefaultQueue);
 
     var loginPath = '/api/login';
     app.post(loginPath, login.authorize);

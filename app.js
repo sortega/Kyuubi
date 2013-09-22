@@ -15,8 +15,8 @@ exports.create = function(port, redisQueue) {
     var unsupportedVerb = function(req, res) {
         res.json(405, {
             errorCode: "GEN-03",
-            errorDescription: "The HTTP verb is not supported in the REST " +
-                "resource. Request URL: " + req.path
+            errorDescription: "El verbo HTTP no está soportado por el recurso " +
+                "URL: " + req.path
         });
     };
 
@@ -45,11 +45,17 @@ exports.create = function(port, redisQueue) {
     app.post(loginPath, login.authorize);
     app.all(loginPath, unsupportedVerb);
 
+    var queuePath = '/api/queue/:id';
+    app.get(queuePath, queue.get);
+    app.post(queuePath, queue.dispatchAction);
+    
+    app.all(queuePath, unsupportedVerb);
+
     app.all('/api/*', function(req, res) {
         res.json(404, {
             errorCode: "GEN-04",
-            errorDescription: "The REST resource was not found. " + 
-                "Request URL: " + req.path
+            errorDescription: "El recuso no ha sido encontrado. " +
+                "URL: " + req.path
         });
     });
 

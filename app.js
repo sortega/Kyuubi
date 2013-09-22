@@ -9,8 +9,9 @@ var routes = require('./routes');
 var login = require('./routes/login');
 var path = require('path');
 
-exports.create = function(port, redisQueue) {
+exports.create = function(port, redisQueue, smsService) {
     var app = express();
+    var queue = require('./routes/queue')(redisQueue, smsService);
 
     var unsupportedVerb = function(req, res) {
         res.json(405, {

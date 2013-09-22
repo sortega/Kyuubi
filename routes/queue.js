@@ -36,6 +36,8 @@ function Queue(redisQueue, smsService) {
         return sendSms(recipients, req.body.notification);
     };
 
+    var extractPhone = function(queueElem) { return queueElem && queueElem.phoneNumber; };
+
     var id = 1;
     var actions = {
         push: {
@@ -63,7 +65,10 @@ function Queue(redisQueue, smsService) {
         },
         pop: {
             getRecepients: function(queue) {
-                return q.all([queue.peek(), queue.get(3)]);
+                return q.all([
+                    queue.peek().then(extractPhone),
+                    queue.get(3).then(extractPhone)
+                ]);
             },
             queueAction: function(req, res, queue) {
                 return queue.pop().then(function(elem) {
@@ -84,7 +89,9 @@ function Queue(redisQueue, smsService) {
         },
         clear: {
             getRecepients: function(queue) {
-                return queue.list(0, -1);
+                return queue.list(0, -1).then(function(elems) {
+                    return elems.map(extractPhone);
+                });
             },
             queueAction: function(req, res, queue) { return queue.clear(); },
             sendSms: sendNotificationSms

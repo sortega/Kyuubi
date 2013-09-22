@@ -161,7 +161,7 @@ describe("Queue resource", function() {
 
     it("must accept a notification when popping from a queue",
         function(done) {
-            agent.post("/api/queue/gro")
+            agent.post("/api/queue/c3po")
                 .send({
                     "action" : "push",
                     "member" : {
@@ -171,13 +171,13 @@ describe("Queue resource", function() {
                 .expect(200)
                 .end(popWithNotification)
             function popWithNotification(err, req) {
-                agent.post("/api/queue/gro")
+                agent.post("/api/queue/c3po")
                     .send({
                         "action": "pop",
                         "notification": "Composed by the client code"
                     })
                     .expect(200)
-                    .expect({"id": "foo", "name": "La cola de foo", "members": []})
+                    .expect({"id": "c3po", "name": "La cola de c3po", "members": []})
                     .end(done)
             };
         })

@@ -2,47 +2,61 @@
 
 "use strict";
 
-var redisQueue = require('redis-queue')();
+var redisQueue = require('../redis-queue')();
 
-var actions = {
-    push: function(req, res) {
-        var id = req.params.id;
-        redisQueue.getQueue(id)
-            .insert(JSON.stringify(req.body.member))
-            .then(function() {
-                return getQueue(id)
-            }).then(function(queue) {
-                res.json(200, queue);
-            });
-    },
-    pop: function(req, res) {},
-    clear: function(req, res) {}
-};
-
-var getQueue = function(id) {
-     return redisQueue
-        .getQueue(id)
+var returnQueue = function(id, res) {
+    redisQueue.getQueue(id)
         .list(0, 0)
         .then(function(elems) {
             var members = elems.map(JSON.parse);
-            return {
+            var queue = {
                 id: id,
                 name: "La cola de " + id,
                 members: members
             };
+            res.json(200, queue);
         });
+};
+
+var sendNotificationSms = function(req, res) {
+    // TODO: Send notification SMS
 }
 
+var actions = {
+    push: {
+        queueAction: function(req, res, queue) {
+            return queue.insert(JSON.stringify(req.body.member));
+        },
+        sendSms: function(req, res) {
+            // TODO
+        }
+    },
+    pop: {
+        queueAction: function(req, res, queue) { return queue.pop(); },
+        sendSms: sendNotificationSms
+    },
+    clear: {
+        queueAction: function(req, res, queue) { return queue.clear(); },
+        sendSms: sendNotificationSms
+    }
+};
+
 exports.get = function(req, res) {
-    getQueue(req.params.id).then(function(queue) {
-        res.json(200, queue);
-    });
+    returnQueue(req.params.id, res);
 };
 
 exports.dispatchAction = function(req, res) {
-    var action = req.body.action;
-    if (action in actions) {
-        actions[req.body.action](req, res);
+    if (req.body.action in actions) {
+        var action = actions[req.body.action];
+        var id = req.params.id;
+        action.queueAction(req, res, redisQueue.getQueue(id))
+            .then(function() {
+                returnQueue(id, res);
+                action.sendSms(req, res);
+            },
+            function() {
+                // TODO: Error case
+            });
     } else {
         // TODO send error;
     }

@@ -1,6 +1,6 @@
 ;// Copyright Bitwise Labs. All rights reserved.
 "use strict";
-var app = require("../../app.js").app,
+var app = require("../utils/app-mock.js").app,
     expect = require("expect.js"),
     request = require("supertest");
 

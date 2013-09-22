@@ -8,8 +8,8 @@ function Queue(redisQueue, smsService) {
 
     var returnQueue = function(id, res) {
         redisQueue.getQueue(id)
-            .list(0, 0)
-            .then(function(elems) {
+            .list(0, -1)
+            .done(function(elems) {
                 var members = elems.map(JSON.parse);
                 var queue = {
                     id: id,
@@ -26,10 +26,11 @@ function Queue(redisQueue, smsService) {
             if (!(recipients instanceof Array)) {
                 recipients = [recipients];
             }
-            recipients.map(function(recipient) {
-                smsService.send(recipient, body);
-            });
+            return q.all(recipients.map(function(recipient) {
+                return smsService.send(recipient, body);
+            }));
         }
+        return q();
     };
 
     var sendNotificationSms = function(recipients, req) {
@@ -49,7 +50,7 @@ function Queue(redisQueue, smsService) {
                     });
                 }
             },
-            sendSms: function() { }
+            sendSms: q
         },
         pop: {
             getRecepients: function(queue) {
@@ -67,13 +68,14 @@ function Queue(redisQueue, smsService) {
                 });
             },
             sendSms: function(recipients, req) {
-                sendNotificationSms(recipients[0], req);
-                sendSms(recipients[1], "Su turno llegará en breve. Por favor, acérquese al local.");
+                return q.all([
+                    sendNotificationSms(recipients[0], req),
+                    sendSms(recipients[1], "Su turno llegará en breve. Por favor, acérquese al local.")]);
             }
         },
         clear: {
             getRecepients: function(queue) {
-                return queue.list(0, 0);
+                return queue.list(0, -1);
             },
             queueAction: function(req, res, queue) { return queue.clear(); },
             sendSms: sendNotificationSms
@@ -91,18 +93,18 @@ function Queue(redisQueue, smsService) {
             var queue = redisQueue.getQueue(id);
             action.getRecepients(queue)
                 .then(function(recipients) {
-                    action.queueAction(req, res, redisQueue.getQueue(id))
+                    return action.queueAction(req, res, redisQueue.getQueue(id))
                         .then(function() {
                             returnQueue(id, res);
                             action.sendSms(recipients, req);
                         },
                         function(err) {
-
-                            // TODO: Error case something failed
+                            res.json(400, err);
                         });
-                });
+                }).done();
         } else {
             // TODO send error unsupported action;
+            res.send(400);
         }
     };
 };

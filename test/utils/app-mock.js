@@ -3,6 +3,7 @@
 
 var port = 3000;
 
-var redis = require("../utils/redis-mock");
+var redis = require("./redis-mock");
+var smsSvc = require("./sms-mock")();
 var redisQueue = require("../../redis-queue")(redis);
-exports.app = require("../../app").create(port, redisQueue);
+exports.app = require("../../app").create(port, redisQueue, smsSvc);

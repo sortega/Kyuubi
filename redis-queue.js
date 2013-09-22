@@ -16,6 +16,8 @@ function QueueSystem(redis) {
         this.list = queuify(client.lrange);
         this.length = queuify(client.llen);
         this.clear = queuify(client.del);
+        this.get = queuify(client.lindex);
+        this.peek = function() { return this.get(0); };
     };
 
     this.getQueue = function(name) {
@@ -28,5 +30,8 @@ function QueueSystem(redis) {
 };
 
 module.exports = function(redis) {
+    if (!redis) {
+        redis = require('redis');
+    }
     return new QueueSystem(redis);
 };

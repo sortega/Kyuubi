@@ -5,15 +5,5 @@
  */
 
 exports.index = function(req, res){
-  res.render('index', {
-    title: 'Express',
-    elements: [{
-        name: "John Smith",
-        persons: 4,
-        number: "123"
-    }, {
-        name: "John Smith",
-        persons: 4,
-        number: "456"
-    }]});
+  res.render('index', { title: 'Kyuubi' });
 };

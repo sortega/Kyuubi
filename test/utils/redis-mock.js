@@ -40,6 +40,13 @@ function InMemorySystem() {
         callback(null, elems.slice(start, actualEnd));
     });
 
+    this.lindex = withQueue(function(elems, index, callback) {
+        while (index < 0 ) {
+            index = elems.length - index;
+        }
+        callback(null, elems[index] || null);
+    });
+
     this.del = withQueue(function(elems, callback) {
         elems.length = 0;
         callback(null, true);

@@ -1,7 +1,12 @@
 Kyuubi
 ======
 
-An application about queues, with NodeJS
+An application about queues, with NodeJS.
+
+Requirements:
+
+ * NodeJS.
+ * A Redis server running on localhost at the default port.
 
 How to run:
 

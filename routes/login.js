@@ -9,7 +9,7 @@ exports.authorize = function(req, res) {
     } else {
         res.json(401, {
             errorCode: "GEN-02",
-            errorDescription: "Missing or invalid credentials."
+            errorDescription: "Credenciales incorrectos."
         });
     }
 };

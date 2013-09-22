@@ -15,7 +15,7 @@ var app = express();
 var unsupportedVerb = function(req, res) {
     res.json(405, {
         errorCode: "GEN-03",
-        errorDescription: "The HTTP verb is not supported in the REST resource."
+        errorDescription: "The HTTP verb is not supported in the REST resource. Request URL: " + req.path
     });
 };
 
@@ -47,7 +47,7 @@ app.all(loginPath, unsupportedVerb);
 app.all('/api/*', function(req, res) {
     res.json(404, {
         errorCode: "GEN-04",
-        errorDescription: "The REST resource was not found."
+        errorDescription: "The REST resource was not found. Request URL: " + req.path
     });
 });
 

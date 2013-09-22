@@ -195,4 +195,45 @@ describe("Queue resource", function() {
                 })
                 .end(done)
         })
+
+    it("must clear the queue if requested to",
+        function(done) {
+            agent.post("/api/queue/grc")
+                .send({
+                    "action" : "push",
+                    "member" : {
+                        "phoneNumber" : "34666111333"
+                    }
+                })
+                .expect(200)
+                .end(postAgain)
+            function postAgain(err, req) {
+                agent.post("/api/queue/grc")
+                    .send({
+                        "action" : "push",
+                        "member" : {
+                            "phoneNumber" : "34666111222"
+                        }
+                    })
+                    .expect(200)
+                    .expect({
+                        "id": "grc",
+                        "name": "La cola de grc",
+                        "members": [
+                            {"id": 8, "phoneNumber": "34666111333"},
+                            {"id": 9, "phoneNumber": "34666111222"}
+                        ]
+                    })
+                    .end(clearQueue)
+            };
+            function clearQueue(err, req) {
+                agent.post("/api/queue/grc")
+                    .send({
+                        "action": "clear"
+                    })
+                    .expect(200)
+                    .expect({"id": "grc", "name": "La cola de grc", "members": []})
+                    .end(done)
+            };
+        })
 });

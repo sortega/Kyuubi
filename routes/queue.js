@@ -6,17 +6,16 @@ var q = require('q');
 
 function Queue(redisQueue, smsService) {
 
-    var returnQueue = function(id, res) {
-        redisQueue.getQueue(id)
+    var getQueue = function(id) {
+        return redisQueue.getQueue(id)
             .list(0, -1)
-            .done(function(elems) {
+            .then(function(elems) {
                 var members = elems.map(JSON.parse);
-                var queue = {
+                return {
                     id: id,
                     name: "La cola de " + id,
                     members: members
                 };
-                res.json(200, queue);
             });
     };
 
@@ -83,7 +82,9 @@ function Queue(redisQueue, smsService) {
     };
 
     this.get = function(req, res) {
-        returnQueue(req.params.id, res);
+        getQueue(req.params.id).then(function(queue) {
+            res.json(200, queue);
+        });
     };
 
     this.dispatchAction = function(req, res) {
@@ -95,16 +96,22 @@ function Queue(redisQueue, smsService) {
                 .then(function(recipients) {
                     return action.queueAction(req, res, redisQueue.getQueue(id))
                         .then(function() {
-                            returnQueue(id, res);
-                            action.sendSms(recipients, req);
+                            return q.all([
+                                getQueue(id),
+                                action.sendSms(recipients, req)
+                            ]);
+                        }).spread(function(queue) {
+                            res.json(200, queue);
                         },
                         function(err) {
                             res.json(400, err);
                         });
                 }).done();
         } else {
-            // TODO send error unsupported action;
-            res.send(400);
+            res.json(400, {
+                errorCode: "QUE-03",
+                errorMessage: "Acción de cola desconocida."
+            });
         }
     };
 };

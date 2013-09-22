@@ -16,7 +16,7 @@ function QueueSystem(redis) {
         this.list = queuify(client.lrange);
         this.length = queuify(client.llen);
         this.clear = queuify(client.del);
-        this.get = function(index) { throw "Not Implemented"; };
+        this.get = queuify(client.lindex);
         this.peek = function() { return this.get(0); };
     };
 

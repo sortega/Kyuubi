@@ -15,7 +15,7 @@ exports.authorize = function(req, res) {
     } else {
         res.json(401, {
             errorCode: "GEN-02",
-            errorDescription: "Credenciales incorrectos."
+            errorDescription: "Nombre de usuario y/o contraseña incorrectos."
         });
     }
 };

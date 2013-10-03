@@ -10,10 +10,10 @@ require(['jquery', 'jquery_pjax', 'jquery_cookie'], function($) {
         function setNextElement(node) {
             node.addClass("q-head");
             var actions = $('<div class="card-actions"/>');
-            var presentButton = $('<button type="button">Presente</button>');
+            var presentButton = $('<input type="button" value="Presente"/>');
             presentButton.click(makeDequeueHandler());
             actions.append(presentButton);
-            var missingButton = $('<button type="button">Ausente</button>');
+            var missingButton = $('<input type="button" value="Ausente"/>');
             missingButton.click(makeDequeueHandler("missing"));
             actions.append(missingButton);
             node.append(actions);

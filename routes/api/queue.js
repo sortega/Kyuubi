@@ -20,16 +20,16 @@ function Queue(redisQueue, smsService) {
     };
 
     var sendSms = function(recipients, body) {
-        if (body) {
-            recipients = recipients || [];
-            if (!(recipients instanceof Array)) {
-                recipients = [recipients];
-            }
-            return q.all(recipients.map(function(recipient) {
-                return smsService.send(recipient, body);
-            }));
+        if (!body) {
+            return q();
         }
-        return q();
+        recipients = recipients || [];
+        if (!(recipients instanceof Array)) {
+            recipients = [recipients];
+        }
+        return q.all(recipients.map(function(recipient) {
+            return smsService.send(recipient, body);
+        }));
     };
 
     var sendNotificationSms = function(recipients, req) {
@@ -105,33 +105,31 @@ function Queue(redisQueue, smsService) {
     };
 
     this.dispatchAction = function(req, res) {
-        if (req.body.action in actions) {
-            var action = actions[req.body.action];
-            var id = req.params.id;
-            var queue = redisQueue.getQueue(id);
-            action.getRecepients(queue, req)
-                .then(function(recipients) {
-                    return action.queueAction(req, res, redisQueue.getQueue(id))
-                        .then(function() {
-                            return q.all([
-                                getQueue(id),
-                                action.sendSms(recipients, req)
-                            ]);
-                        }).spread(function(queue) {
-                            res.json(200, queue);
-                        },
-                        function(err) {
-                            console.log("Error when processing REST queue request:");
-                            console.log(err);
-                            res.json(400, err);
-                        });
-                }).done();
-        } else {
+        if (!(req.body.action in actions)) {
             res.json(400, {
                 errorCode: "QUE-03",
                 errorMessage: "Acción de cola desconocida."
             });
+            return;
         }
+        var action = actions[req.body.action];
+        var id = req.params.id;
+        var queue = redisQueue.getQueue(id);
+        var recipientsPromise = action.getRecepients(queue, req);
+        recipientsPromise.then(function() {
+            return q.all([recipientsPromise, action.queueAction(req, res, redisQueue.getQueue(id))]);
+        }).spread(function(recipients) {
+            return q.all([getQueue(id), action.sendSms(recipients, req)]);
+        }).spread(
+            function(queue) {
+                res.json(200, queue);
+            },
+            function(err) {
+                console.log("Error when processing REST queue request:");
+                console.log(err);
+                res.json(400, err);
+            }
+        ).done();
     };
 };
 

@@ -1,6 +1,12 @@
 ;// Copyright Bitwise Labs. All rights reserved.
 
-"use strict";
+/*
+ * GET login page.
+ */
+
+exports.showForm = function(req, res){
+  res.render('index', { title: 'Kyuubi' });
+};
 
 exports.authorize = function(req, res) {
     if (req.body.username === 'admin' && req.body.password === 'admin!') {

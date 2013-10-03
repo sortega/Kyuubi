@@ -4,7 +4,7 @@
 
 require(['jquery', 'jquery_pjax', 'jquery_cookie'], function($) {
     $(document).ready(function() {
-        var queueId = $(".queue")[0].getAttribute("queue-id");
+        var queueId = $(".queue")[0].getAttribute("data-queue-id");
         var queueResource = "/api/queue/" + queueId;
 
         function setNextElement(node) {

@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    h1= title
+    div(class="queue", data-queue-id="admin")
+        #enqueue
+            form
+                | Teléfono 
+                input#phoneNumber
+                input#enqueue-submit(type="submit", value="Añadir", disabled="true")
+        #message(style="display: none")
+        #global-actions
+            button#clear-queue Limpiar cola
+        #queue-area
+
+block header
+  script.
+      requirejs(["queue"]);

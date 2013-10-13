@@ -9,8 +9,8 @@ describe("Front page", function() {
 
     it("must show login form (no cookies)", function(done) {
         agent.get("/")
-            .expect("Content-Type", "text/plain")
-            .expect(200, 'id="login-form"')
+            .expect("Content-Type", /text\/html.*/)
+            .expect(200, /.*id="login".*/)
             .end(done);
     });
 });

@@ -1,16 +1,14 @@
 ;// Copyright Bitwise Labs. All rights reserved.
-
-/**
- * Module dependencies.
- */
+"use strict";
 
 var express = require('express');
-var routes = require('./routes');
-var login = require('./routes/login');
+var loginPage = require('./routes/pages/login');
+var queuePage = require('./routes/pages/queue');
 var path = require('path');
 
-exports.create = function(port, redisQueue) {
+exports.create = function(port, redisQueue, smsService) {
     var app = express();
+    var queue = require('./routes/api/queue')(redisQueue, smsService);
 
     var unsupportedVerb = function(req, res) {
         res.json(405, {
@@ -39,11 +37,18 @@ exports.create = function(port, redisQueue) {
         app.use(express.errorHandler());
     }
 
-    app.get('/', routes.index);
+    app.get('/', loginPage.showForm);
+    app.get('/queue', queuePage.showDefaultQueue);
 
     var loginPath = '/api/login';
-    app.post(loginPath, login.authorize);
+    app.post(loginPath, loginPage.authorize);
     app.all(loginPath, unsupportedVerb);
+
+    var queuePath = '/api/queue/:id';
+    app.get(queuePath, queue.get);
+    app.post(queuePath, queue.dispatchAction);
+    
+    app.all(queuePath, unsupportedVerb);
 
     app.all('/api/*', function(req, res) {
         res.json(404, {
